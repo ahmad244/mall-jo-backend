@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const User = require("./models/User"); // Require the User model
-const Product = require("./models/Product"); // Require the User model
+import mongoose from "mongoose";
+// import User from "./models/User.js"; // Import the User model
+import Product from "./models/Product.js"; // Import the Product model
 
 // Connect to your MongoDB instance using your connection string
 mongoose.connect("mongodb+srv://DatabaseUser:qQvu3dmsyHLSreOH@clustername.j3h8ypm.mongodb.net/", {
@@ -27,25 +27,57 @@ const users = [
 ];
 
 const products = [
-    {
-      title: "Women's Trench Coat",
-      desc: "A classic and versatile trench coat for women",
-      img: "https://images.unsplash.com/photo-1624747752634-1f1f24b0a0c3?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFybyx3aXx8dHJlbmNoJTI0Y29hdCUyMG9mJTI0d29tZW4!&auto=format&fit=crop&w=500&q=60",
-      categories: ["women", "coat"],
+  {
+    title: "Women's Dress",
+    desc: "Beautiful dress for women",
+    img: "https://t3.ftcdn.net/jpg/01/38/94/62/360_F_138946263_EtW7xPuHRJSfyl4rU2WeWmApJFYM0B84.jpg",
+    categories: ["women", "coat"],
+    productSpecs: {
+      color: ["Red", "Blue", "Black"],
       size: ["XS", "S", "M", "L", "XL"],
-      color: ["Beige", "Khaki", "Black"],
-      price: 99.99,
     },
-    {
-      title: "Women's Skinny Jeans",
-      desc: "High-waisted skinny jeans for women",
-      img: "https://images.unsplash.com/photo-1604030403300-4378f2279d42?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFybyx3aXx8d29tZW4ncyUyMHNlcnZpbnxlbnwwfHx8fA&auto=format&fit=crop&w=500&q=60",
-      categories: ["women", "jeans"],
-      size: ["24", "26", "28", "30", "32"],
-      color: ["Blue", "Black", "Gray"],
-      price: 49.99,
+    price: 49.99,
+    inStock: true,
+  },
+  {
+    title: "Men's Shirt",
+    desc: "Stylish shirt for men",
+    img: "https://st.depositphotos.com/1085342/1888/i/450/depositphotos_18885485-stock-photo-nothing-to-wear-concept-young.jpg",
+    categories: ["women", "jeans"],
+    productSpecs: {
+      color: ["White", "Black", "Gray"],
+      size: ["S", "M", "L", "XL", "XXL"],
     },
-  ];
+    price: 29.99,
+    inStock: true,
+  },
+
+  {
+    title: "Women's Dress",
+    desc: "Beautiful dress for women",
+    img: "https://t3.ftcdn.net/jpg/01/38/94/62/360_F_138946263_EtW7xPuHRJSfyl4rU2WeWmApJFYM0B84.jpg",
+    categories: [, "coat"],
+    productSpecs: {
+      color: ["Red", "Blue", "Black"],
+      size: ["XS", "S", "M", "L", "XL"],
+    },
+    price: 49.99,
+    inStock: true,
+  },
+  {
+    title: "Men's Shirt",
+    desc: "Stylish shirt for men",
+    img: "https://st.depositphotos.com/1085342/1888/i/450/depositphotos_18885485-stock-photo-nothing-to-wear-concept-young.jpg",
+    categories: ["women", ],
+    productSpecs: {
+      color: ["White", "Black", "Gray"],
+      size: ["S", "M", "L", "XL", "XXL"],
+    },
+    price: 56.99,
+    inStock: true,
+  },
+  
+];
 
 // Function to seed data for a specific model
 const seedData = async (model, data) => {

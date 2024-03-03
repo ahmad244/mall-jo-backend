@@ -1,8 +1,11 @@
-const router = require("express").Router();
-// const stripe = require("stripe")(process.env.STRIPE_KEY);
-const KEY = process.env.STRIPE_KEY
-const stripe = require("stripe")(KEY);
+import { Router } from "express";
+import stripePackage from "stripe";
 
+const router = Router();
+
+// Set the Stripe API key
+const KEY = process.env.STRIPE_KEY;
+const stripe = stripePackage(KEY);
 router.post("/payment", (req, res) => {
   stripe.charges.create(
     {
@@ -20,4 +23,4 @@ router.post("/payment", (req, res) => {
   );
 });
 
-module.exports = router;
+export default router;

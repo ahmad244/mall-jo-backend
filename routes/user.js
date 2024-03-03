@@ -1,11 +1,14 @@
-const User = require("../models/User");
-const {
+import { Router } from "express";
+import CryptoJS from "crypto-js";
+import User from "../models/User.js";
+import {
   verifyToken,
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
-} = require("./verifyToken");
+} from "./verifyToken.js";
 
-const router = require("express").Router();
+const router = Router();
+
 
 //UPDATE
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
@@ -91,4 +94,4 @@ router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

@@ -1,23 +1,22 @@
-const express = require("express");
+import express from "express";
+import mongoose from "mongoose";
+import userRoute from "./routes/user.js";
+import authRoute from "./routes/auth.js";
+import productRoute from "./routes/product.js";
+import cartRoute from "./routes/cart.js";
+import orderRoute from "./routes/order.js";
+import stripeRoute from "./routes/stripe.js";
+import cors from "cors";
+
 const app = express();
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-dotenv.config();
-const userRoute = require("./routes/user");
-const authRoute = require("./routes/auth");
-const productRoute = require("./routes/product");
-const cartRoute = require("./routes/cart");
-const orderRoute = require("./routes/order");
-const stripeRoute = require("./routes/stripe");
-const cors = require("cors");
 const corsOptions = {
   origin: "http://localhost:3000", // Replace with your client-side origin
   credentials: true, // Allow cookies for authenticated requests
-  allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
+  allowedHeaders: ["Content-Type", "Authorization","token"], // Specify allowed headers
   methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
 };
 
-console.log("mongo url ", process.env.MONGO_URL);
+// console.log("mongo url ", process.env.MONGO_URL);
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("DB Connection Successfull!"))

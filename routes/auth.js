@@ -1,7 +1,9 @@
-const router = require("express").Router();
-const User = require("../models/User");
-const CryptoJS = require("crypto-js");
-const jwt = require("jsonwebtoken");
+import { Router } from "express";
+import User from "../models/User.js";
+import CryptoJS from "crypto-js";
+import jwt from "jsonwebtoken";
+
+const router = Router();
 
 //REGISTER
 router.post("/register", async (req, res) => {
@@ -44,15 +46,15 @@ router.post("/login", async (req, res) => {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_SEC,
-      {expiresIn:"3d"}
+      { expiresIn: "3d" }
     );
 
     const { password, ...others } = user._doc;
 
-    res.status(200).json({...others, accessToken});
+    res.status(200).json({ ...others, accessToken });
   } catch (err) {
     res.status(500).json(err);
   }
 });
 
-module.exports = router;
+export default router;
