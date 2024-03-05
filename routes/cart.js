@@ -6,16 +6,22 @@ import {
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
 } from "./verifyToken.js";
+import { ObjectId } from "mongodb";
 
 const router = Router();
 
 //GET USER CART
-router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
+router.get("/findById", verifyToken, async (req, res) => {
   try {
+    const userId = req.user.id;
+
+    //const cart = await Cart.findOne({ userId });
+    console.log("before aggregate");
+
     const cart = await Cart.aggregate([
       {
         $match: {
-          userId: req.params.userId,
+          userId: new ObjectId(userId),
         },
       },
       {
@@ -23,16 +29,52 @@ router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
       },
       {
         $lookup: {
-          from: "Product",
+          from: "products",
           localField: "products.productId",
           foreignField: "_id",
-          as: "newProducts.product",
+          as: "product",
+        },
+      },
+      {
+        $unwind: "$product",
+      },
+      {
+        $unset: "product._id",
+      },
+      {
+        $group: {
+          _id: "$_id",
+          createdAt: {
+            $first: "$createdAt",
+          },
+          __v: {
+            $first: "$__v",
+          },
+          userId: {
+            $first: "$userId",
+          },
+          updatedAt: {
+            $first: "$updatedAt",
+          },
+          products: {
+            $push: {
+              _id: "$products._id",
+              productId: "$products.productId",
+              productSpecs: "$products.productSpecs",
+              quantity: "$products.quantity",
+              product: "$product",
+            },
+          },
         },
       },
     ]);
 
+    console.log("after agregate");
+    console.log(cart);
+
     res.status(200).json(cart);
   } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });

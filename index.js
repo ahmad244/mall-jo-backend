@@ -12,7 +12,7 @@ const app = express();
 const corsOptions = {
   origin: "http://localhost:3000", // Replace with your client-side origin
   credentials: true, // Allow cookies for authenticated requests
-  allowedHeaders: ["Content-Type", "Authorization","token"], // Specify allowed headers
+  allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
   methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
 };
 
