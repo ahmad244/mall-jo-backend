@@ -11,12 +11,11 @@ import { ObjectId } from "mongodb";
 const router = Router();
 
 //GET USER CART
-router.get("/findById", verifyToken, async (req, res) => {
+router.get("/", verifyToken, async (req, res) => {
   try {
     const userId = req.user.id;
 
     //const cart = await Cart.findOne({ userId });
-    console.log("before aggregate");
 
     const cart = await Cart.aggregate([
       {
@@ -69,10 +68,7 @@ router.get("/findById", verifyToken, async (req, res) => {
       },
     ]);
 
-    console.log("after agregate");
-    console.log(cart);
-
-    res.status(200).json(cart);
+    res.status(200).json(cart?.[0]);
   } catch (err) {
     console.log(err);
     res.status(500).json(err);
@@ -81,13 +77,12 @@ router.get("/findById", verifyToken, async (req, res) => {
 
 // ADD TO CART
 router.post("/add", verifyToken, async (req, res) => {
-  const userId = req.body.userId;
-  const productId = req.body.productId;
+  const userId = req.user.id;
+  const productId = new ObjectId(req.body.productId);
   const quantity = req.body.quantity;
   const productSpecs = req.body.productSpecs;
 
   try {
-    // Check if cart exists for the user
     let cart = await Cart.findOne({ userId });
     const product = await Product.findOne({ productId });
     if (product && product.inStock === true) {
@@ -95,11 +90,11 @@ router.post("/add", verifyToken, async (req, res) => {
         // Cart exists, add product to cart
         // Check if product exists in cart already
         const itemIndex = cart.products.findIndex((p) => {
-          if (p.productId !== productId) {
+          if (p.productId.toString() !== productId.toString()) {
             return false;
           }
 
-          const currentProductSpecs = p.productSpecs;
+          const currentProductSpecs = Object.fromEntries(p.productSpecs);
 
           if (
             Object.keys(currentProductSpecs).length !==
@@ -159,4 +154,52 @@ router.post("/add", verifyToken, async (req, res) => {
   }
 });
 
+///implement remove product from cart
+
+router.delete("/cartItem", verifyToken, async (req, res) => {
+  const userId = req.user.id;
+  const productId = new ObjectId(req.body.productId);
+  const productSpecs = req.body.productSpecs;
+  try {
+    let cart = await Cart.findOne({ userId });
+    if(cart){
+      const itemIndex = cart.products.findIndex((p) => {
+        if (p.productId.toString() !== productId.toString()) {
+          return false;
+        }
+        const currentProductSpecs = Object.fromEntries(p.productSpecs);
+        if (
+          Object.keys(currentProductSpecs).length !==
+          Object.keys(productSpecs).length
+        ) {
+          return false;
+        }
+
+        for (const key of Object.keys(productSpecs)) {
+          if (!(key in currentProductSpecs)) {
+            return false;
+          }
+
+          if (currentProductSpecs[key] !== productSpecs[key]) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+
+      if (itemIndex > -1) {
+        cart.products.splice(itemIndex, 1);
+        cart = await cart.save();
+        return res.status(200).json(cart);
+
+      } 
+
+      return res.status(404).json("item not found in cart");
+    }
+  } catch (err) {
+    console.log(err);
+    res.status(500).json("Something went wrong");
+  }
+});
 export default router;
