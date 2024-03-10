@@ -10,7 +10,7 @@ import cors from "cors";
 
 const app = express();
 const corsOptions = {
-  origin: "http://localhost:3000", // Replace with your client-side origin
+  origin: process.env.ORIGIN_URL, // Replace with your client-side origin
   credentials: true, // Allow cookies for authenticated requests
   allowedHeaders: ["Content-Type", "Authorization"], // Specify allowed headers
   methods: ["GET", "POST", "PUT", "DELETE"], // Specify allowed HTTP methods
