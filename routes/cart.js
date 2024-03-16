@@ -10,6 +10,31 @@ import { ObjectId } from "mongodb";
 
 const router = Router();
 
+//GET USER CART NUM OF PRODUCTS
+router.get("/numOfProducts", verifyToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const numOfProducts = await Cart.aggregate([
+      {
+        $match: {
+          userId: new ObjectId(userId),
+        },
+      },
+      {
+        $unwind: "$products",
+      },
+      {
+        $count: "itemCount",
+      },
+    ]);
+
+    res.status(200).json(numOfProducts?.[0] || { itemCount: 0 });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
 //GET USER CART
 router.get("/", verifyToken, async (req, res) => {
   try {
@@ -162,7 +187,7 @@ router.delete("/cartItem", verifyToken, async (req, res) => {
   const productSpecs = req.body.productSpecs;
   try {
     let cart = await Cart.findOne({ userId });
-    if(cart){
+    if (cart) {
       const itemIndex = cart.products.findIndex((p) => {
         if (p.productId.toString() !== productId.toString()) {
           return false;
@@ -192,8 +217,7 @@ router.delete("/cartItem", verifyToken, async (req, res) => {
         cart.products.splice(itemIndex, 1);
         cart = await cart.save();
         return res.status(200).json(cart);
-
-      } 
+      }
 
       return res.status(404).json("item not found in cart");
     }
